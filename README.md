@@ -54,9 +54,7 @@ A modern Next.js application that extracts content from blog URLs, generates AI-
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
    
    # MongoDB Configuration
-   MONGODB_URI=mongodb://localhost:27017
-   # Or for MongoDB Atlas:
-   # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/
+   MONGODB_URI=mongodb+srv://<username>:<password>@<host>/<db>
    MONGODB_DB=blog_summarizer
    ```
 
@@ -285,4 +283,4 @@ You can easily deploy this project to [Vercel](https://vercel.com/) for free.
 ---
 
 **Made with ❤️ at Nexium.ltd – Summer Internship Project**
-"# Nexium_Abdul_Rehman_AI-Web-Dev-Blog-Summarizer" 
+"# Nexium_Abdul_Rehman_AI-Web-Dev-Blog-Summarizer"
