@@ -1,5 +1,9 @@
 # Blog Summariser & Urdu Translator
 
+![Project Thumbnail](public/Thumbnail.png)
+
+# Preview
+
 A modern Next.js application that extracts content from blog URLs, generates AI-powered summaries, translates them to Urdu, and stores the data in both Supabase and MongoDB databases.
 
 ## ✨ Features
@@ -278,7 +282,7 @@ You can easily deploy this project to [Vercel](https://vercel.com/) for free.
 
 ---
 
-**Your app will be live at `https://your-project-name.vercel.app`!**
+**Your app will be live at `https://nexium-abdul-rehman-blog-summarizer.vercel.app/`!**
 
 ---
 
