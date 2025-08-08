@@ -68,18 +68,7 @@ export default function Home() {
     setLoading(true);
     
     try {
-      setLoadingStep("Checking database...");
-      const existing = await checkUrlExists(url);
-      
-      if (existing) {
-        setExistingSummary(existing);
-        setSummary(existing.summary);
-        setLoadingStep("Found existing summary!");
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setLoading(false);
-        return;
-      }
-
+      // Always generate fresh summaries - removed caching check for real-time processing
       setLoadingStep("Fetching blog content...");
       
       setLoadingStep("Processing content...");
@@ -90,7 +79,7 @@ export default function Home() {
         
         setLoadingStep("Saving to database...");
         try {
-          await saveSummaryToSupabase(url, englishSummary);
+          await saveSummaryToSupabase(url, englishSummary, urduSummary);
           console.log('Summary saved to Supabase successfully');
           
           await loadPreviousSummaries();
@@ -432,7 +421,7 @@ export default function Home() {
                             <Languages className="w-6 h-6 text-emerald-600 dark:text-violet-400" />
                           </div>
                           <div>
-                            <h3 className="text-xl font-bold text-emerald-800 dark:text-violet-300">اردو خلاصہ</h3>
+                            <h3 className="text-xl font-bold text-emerald-800 dark:text-violet-300 font-urdu">اردو خلاصہ</h3>
                             <p className="text-sm text-emerald-600/70 dark:text-violet-400/70">AI-translated summary</p>
                           </div>
                         </div>
@@ -475,13 +464,13 @@ export default function Home() {
                         <Textarea
                           value={urduSummary}
                           readOnly
-                          className="relative z-10 min-h-[160px] bg-white/80 dark:bg-gray-800/60 border-0 rounded-2xl text-emerald-900 dark:text-violet-100 resize-none focus:ring-2 focus:ring-emerald-400/30 dark:focus:ring-violet-400/30 text-base leading-relaxed p-6 shadow-inner backdrop-blur-sm text-right"
+                          className="relative z-10 min-h-[160px] bg-white/80 dark:bg-gray-800/60 border-0 rounded-2xl text-emerald-900 dark:text-violet-100 resize-none focus:ring-2 focus:ring-emerald-400/30 dark:focus:ring-violet-400/30 text-base leading-relaxed p-6 shadow-inner backdrop-blur-sm text-right font-urdu"
                           dir="rtl"
-                          style={{ fontFamily: 'inherit', lineHeight: '1.8' }}
+                          style={{ lineHeight: '1.8' }}
                         />
                         
                         {/* Word count and reading time */}
-                        <div className="flex items-center justify-between mt-4 text-xs text-emerald-600/60 dark:text-violet-400/60">
+                        <div className="flex items-center justify-between mt-4 text-xs text-emerald-600/60 dark:text-violet-400/60 font-urdu">
                           <span>{urduSummary.split(' ').length} الفاظ</span>
                           <span>~{Math.ceil(urduSummary.split(' ').length / 150)} منٹ</span>
                         </div>
@@ -535,7 +524,7 @@ export default function Home() {
                     onClick={() => setSelectedSummary(null)}
                   >
                     <div
-                      className="bg-white dark:bg-gray-900 rounded-2xl p-8 max-w-lg w-full shadow-2xl relative max-h-[80vh] overflow-y-auto"
+                      className="bg-white dark:bg-gray-900 rounded-2xl p-8 max-w-4xl w-full shadow-2xl relative max-h-[80vh] overflow-y-auto mx-4"
                       onClick={e => e.stopPropagation()}
                     >
                       <button
@@ -545,12 +534,42 @@ export default function Home() {
                       >
                         ×
                       </button>
-                      <div className="mb-2 text-xs text-gray-500">
-                        {selectedSummary.created_at ? new Date(selectedSummary.created_at).toLocaleString() : "Unknown date"}
+                      <div className="mb-4">
+                        <div className="mb-2 text-xs text-gray-500">
+                          {selectedSummary.created_at ? new Date(selectedSummary.created_at).toLocaleString() : "Unknown date"}
+                        </div>
+                        <div className="mb-4 text-xs text-blue-600 break-all">{selectedSummary.url}</div>
                       </div>
-                      <div className="mb-2 text-xs text-blue-600 break-all">{selectedSummary.url}</div>
-                      <div className="font-bold mb-2 text-emerald-700 dark:text-violet-300">Summary:</div>
-                      <div className="whitespace-pre-line text-gray-900 dark:text-gray-100">{selectedSummary.summary}</div>
+                      
+                      {/* English Summary Section */}
+                      <div className="mb-6">
+                        <div className="flex items-center mb-3">
+                          <FileText className="w-5 h-5 text-emerald-600 dark:text-violet-400 mr-2" />
+                          <h3 className="font-bold text-emerald-700 dark:text-violet-300">English Summary</h3>
+                        </div>
+                        <div className="whitespace-pre-line text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                          {selectedSummary.summary}
+                        </div>
+                      </div>
+                      
+                      {/* Urdu Summary Section */}
+                      {selectedSummary.urdu_summary && (
+                        <div className="mb-4">
+                          <div className="flex items-center mb-3">
+                            <Languages className="w-5 h-5 text-emerald-600 dark:text-violet-400 mr-2" />
+                            <h3 className="font-bold text-emerald-700 dark:text-violet-300 font-urdu">اردو خلاصہ</h3>
+                          </div>
+                          <div className="whitespace-pre-line text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg font-urdu text-right">
+                            {selectedSummary.urdu_summary}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {!selectedSummary.urdu_summary && (
+                        <div className="text-center text-gray-500 dark:text-gray-400 italic">
+                          Urdu translation not available for this summary
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

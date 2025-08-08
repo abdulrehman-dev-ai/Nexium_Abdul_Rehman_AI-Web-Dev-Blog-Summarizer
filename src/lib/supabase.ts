@@ -1,9 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Add this at the top of src/lib/supabase.ts for debugging
-console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-console.log('Supabase Key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
@@ -15,17 +11,24 @@ export interface SummaryRecord {
   created_at?: string
   url: string
   summary: string
+  urdu_summary?: string
 }
 
 // Function to save summary to Supabase
 export async function saveSummaryToSupabase(
   url: string,
-  summary: string
+  summary: string,
+  urduSummary?: string
 ) {
   try {
+    const insertData: any = { url, summary };
+    if (urduSummary) {
+      insertData.urdu_summary = urduSummary;
+    }
+
     const { data, error } = await supabase
       .from('summarize')
-      .insert([{ url, summary }])
+      .insert([insertData])
       .select()
       .single();
 
